@@ -1,0 +1,8 @@
+{"id": "fixtures_today", "question": "What World Cup matches are on today?", "expected_tools": ["get_fixtures"], "must_mention": ["Mexico"]}
+{"id": "sim_direct", "question": "Simulate Spain vs Argentina. Who wins?", "expected_tools": ["simulate_match"], "must_mention": ["Spain", "Argentina", "%"]}
+{"id": "kb_format", "question": "How do third-place teams advance in this World Cup?", "expected_tools": ["search_knowledge"], "must_mention": ["eight", "third"]}
+{"id": "kb_groups", "question": "Who is in the USA's group?", "expected_tools": ["search_knowledge"], "must_mention": ["Paraguay", "Australia"]}
+{"id": "chained_fixture_sim", "question": "Who's likely to win the USMNT's opening match? Give me probabilities.", "expected_tools": ["get_fixtures", "simulate_match"], "must_mention": ["Paraguay", "%"]}
+{"id": "kb_venue", "question": "Where is the final being played and when?", "expected_tools": ["search_knowledge"], "must_mention": ["MetLife", "July 19"]}
+{"id": "kb_history", "question": "How many World Cups has Brazil won?", "expected_tools": ["search_knowledge"], "must_mention": ["5"]}
+{"id": "sim_alias", "question": "Run the numbers on USA against Türkiye.", "expected_tools": ["simulate_match"], "must_mention": ["%"]}

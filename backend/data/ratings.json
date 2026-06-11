@@ -1,0 +1,282 @@
+{
+  "Spain": {
+    "attack": 1.95,
+    "defence": 0.56,
+    "group": "H"
+  },
+  "Argentina": {
+    "attack": 1.88,
+    "defence": 0.58,
+    "group": "J"
+  },
+  "France": {
+    "attack": 1.9,
+    "defence": 0.6,
+    "group": "I"
+  },
+  "England": {
+    "attack": 1.82,
+    "defence": 0.62,
+    "group": "L"
+  },
+  "Brazil": {
+    "attack": 1.78,
+    "defence": 0.66,
+    "group": "C"
+  },
+  "Portugal": {
+    "attack": 1.76,
+    "defence": 0.66,
+    "group": "K"
+  },
+  "Netherlands": {
+    "attack": 1.7,
+    "defence": 0.68,
+    "group": "F"
+  },
+  "Germany": {
+    "attack": 1.68,
+    "defence": 0.72,
+    "group": "E"
+  },
+  "Belgium": {
+    "attack": 1.6,
+    "defence": 0.76,
+    "group": "G"
+  },
+  "Croatia": {
+    "attack": 1.52,
+    "defence": 0.76,
+    "group": "L"
+  },
+  "Uruguay": {
+    "attack": 1.5,
+    "defence": 0.74,
+    "group": "H"
+  },
+  "Colombia": {
+    "attack": 1.52,
+    "defence": 0.75,
+    "group": "K"
+  },
+  "Morocco": {
+    "attack": 1.48,
+    "defence": 0.7,
+    "group": "C"
+  },
+  "Norway": {
+    "attack": 1.58,
+    "defence": 0.84,
+    "group": "I"
+  },
+  "United States": {
+    "attack": 1.4,
+    "defence": 0.82,
+    "group": "D",
+    "aliases": [
+      "USA",
+      "USMNT",
+      "US"
+    ]
+  },
+  "Mexico": {
+    "attack": 1.38,
+    "defence": 0.84,
+    "group": "A",
+    "aliases": [
+      "El Tri"
+    ]
+  },
+  "Switzerland": {
+    "attack": 1.4,
+    "defence": 0.8,
+    "group": "B"
+  },
+  "Japan": {
+    "attack": 1.42,
+    "defence": 0.8,
+    "group": "F"
+  },
+  "Senegal": {
+    "attack": 1.4,
+    "defence": 0.8,
+    "group": "I"
+  },
+  "Ecuador": {
+    "attack": 1.34,
+    "defence": 0.8,
+    "group": "E"
+  },
+  "Austria": {
+    "attack": 1.38,
+    "defence": 0.84,
+    "group": "J"
+  },
+  "South Korea": {
+    "attack": 1.32,
+    "defence": 0.88,
+    "group": "A",
+    "aliases": [
+      "Korea Republic",
+      "Korea"
+    ]
+  },
+  "Sweden": {
+    "attack": 1.36,
+    "defence": 0.86,
+    "group": "F"
+  },
+  "Türkiye": {
+    "attack": 1.36,
+    "defence": 0.88,
+    "group": "D",
+    "aliases": [
+      "Turkey"
+    ]
+  },
+  "Iran": {
+    "attack": 1.26,
+    "defence": 0.9,
+    "group": "G",
+    "aliases": [
+      "IR Iran"
+    ]
+  },
+  "Egypt": {
+    "attack": 1.26,
+    "defence": 0.86,
+    "group": "G"
+  },
+  "Australia": {
+    "attack": 1.24,
+    "defence": 0.9,
+    "group": "D",
+    "aliases": [
+      "Socceroos"
+    ]
+  },
+  "Canada": {
+    "attack": 1.3,
+    "defence": 0.88,
+    "group": "B"
+  },
+  "Paraguay": {
+    "attack": 1.18,
+    "defence": 0.86,
+    "group": "D"
+  },
+  "Scotland": {
+    "attack": 1.2,
+    "defence": 0.92,
+    "group": "C"
+  },
+  "Algeria": {
+    "attack": 1.26,
+    "defence": 0.92,
+    "group": "J"
+  },
+  "Ivory Coast": {
+    "attack": 1.26,
+    "defence": 0.9,
+    "group": "E",
+    "aliases": [
+      "Cote d'Ivoire"
+    ]
+  },
+  "Tunisia": {
+    "attack": 1.14,
+    "defence": 0.9,
+    "group": "F"
+  },
+  "Czechia": {
+    "attack": 1.28,
+    "defence": 0.92,
+    "group": "A",
+    "aliases": [
+      "Czech Republic"
+    ]
+  },
+  "Bosnia and Herzegovina": {
+    "attack": 1.22,
+    "defence": 0.96,
+    "group": "B",
+    "aliases": [
+      "Bosnia"
+    ]
+  },
+  "Ghana": {
+    "attack": 1.22,
+    "defence": 0.96,
+    "group": "L"
+  },
+  "Panama": {
+    "attack": 1.12,
+    "defence": 0.98,
+    "group": "L"
+  },
+  "Qatar": {
+    "attack": 1.04,
+    "defence": 1.08,
+    "group": "B"
+  },
+  "Saudi Arabia": {
+    "attack": 1.06,
+    "defence": 1.04,
+    "group": "H"
+  },
+  "New Zealand": {
+    "attack": 1.02,
+    "defence": 1.06,
+    "group": "G"
+  },
+  "Jordan": {
+    "attack": 1.02,
+    "defence": 1.06,
+    "group": "J"
+  },
+  "Uzbekistan": {
+    "attack": 1.06,
+    "defence": 1.02,
+    "group": "K"
+  },
+  "South Africa": {
+    "attack": 1.08,
+    "defence": 1.02,
+    "group": "A"
+  },
+  "Cape Verde": {
+    "attack": 1.0,
+    "defence": 1.08,
+    "group": "H",
+    "aliases": [
+      "Cabo Verde"
+    ]
+  },
+  "Iraq": {
+    "attack": 0.98,
+    "defence": 1.1,
+    "group": "I"
+  },
+  "DR Congo": {
+    "attack": 1.06,
+    "defence": 1.04,
+    "group": "K",
+    "aliases": [
+      "Democratic Republic of Congo",
+      "Congo DR"
+    ]
+  },
+  "Curaçao": {
+    "attack": 0.94,
+    "defence": 1.14,
+    "group": "E",
+    "aliases": [
+      "Curacao"
+    ]
+  },
+  "Haiti": {
+    "attack": 0.94,
+    "defence": 1.16,
+    "group": "C"
+  }
+}
