@@ -269,3 +269,74 @@ body {
     max-width: 100%;
   }
 }
+
+.agent-text table {
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+.agent-text th,
+.agent-text td {
+  border: 1px solid var(--line);
+  padding: 5px 12px;
+  text-align: left;
+}
+.agent-text th {
+  background: var(--turf);
+  color: var(--chalk);
+}
+
+/* Animated pitch backdrop */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700' viewBox='0 0 700 700'%3E%3Cg fill='none' stroke='%231c5c3d' stroke-opacity='0.07' stroke-width='2'%3E%3Ccircle cx='350' cy='350' r='110'/%3E%3Ccircle cx='350' cy='350' r='4' fill='%231c5c3d' fill-opacity='0.07'/%3E%3Cpath d='M0 350h240M460 350h240M350 0v240M350 460v240'/%3E%3Crect x='40' y='40' width='620' height='620' rx='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 700px 700px;
+  animation: pitch-pan 90s linear infinite;
+}
+
+.backdrop::before,
+.backdrop::after {
+  content: "";
+  position: absolute;
+  width: 55vmax;
+  height: 55vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
+}
+
+.backdrop::before {
+  background: radial-gradient(circle, rgba(28, 92, 61, 0.18), transparent 65%);
+  top: -20vmax;
+  left: -15vmax;
+  animation: glow-drift 16s ease-in-out infinite alternate;
+}
+
+.backdrop::after {
+  background: radial-gradient(circle, rgba(201, 162, 39, 0.14), transparent 65%);
+  bottom: -22vmax;
+  right: -15vmax;
+  animation: glow-drift 21s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes pitch-pan {
+  to {
+    background-position: 700px 700px;
+  }
+}
+
+@keyframes glow-drift {
+  to {
+    transform: translate(6vmax, -4vmax) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .backdrop::before,
+  .backdrop::after {
+    animation: none;
+  }
+}

@@ -130,75 +130,78 @@ export default function App() {
     }
   }
 
-  return (
-    <div className="shell">
-      <header className="masthead">
-        <div className="badge">WC 2026</div>
-        <h1>Pitchside</h1>
-        <p className="tagline">Agentic match analyst — live data · simulations · knowledge base</p>
-      </header>
+ return (
+    <>
+      <div className="backdrop" aria-hidden="true" />
+      <div className="shell">
+        <header className="masthead">
+          <div className="badge">WC 2026</div>
+          <h1>Pitchside</h1>
+          <p className="tagline">Agentic match analyst — live data · simulations · knowledge base</p>
+        </header>
 
-      <main className="feed" ref={scrollRef}>
-        {turns.length === 0 && (
-          <div className="kickoff">
-            <p>
-              Ask about fixtures, advancement scenarios, history, or have the
-              agent simulate any matchup between the 48 qualified teams. Tool
-              calls appear in the trace as the agent works.
-            </p>
-            <div className="starters">
-              {STARTERS.map((s) => (
-                <button key={s} onClick={() => send(s)} disabled={busy}>
-                  {s}
-                </button>
-              ))}
+        <main className="feed" ref={scrollRef}>
+          {turns.length === 0 && (
+            <div className="kickoff">
+              <p>
+                Ask about fixtures, advancement scenarios, history, or have the
+                agent simulate any matchup between the 48 qualified teams. Tool
+                calls appear in the trace as the agent works.
+              </p>
+              <div className="starters">
+                {STARTERS.map((s) => (
+                  <button key={s} onClick={() => send(s)} disabled={busy}>
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {turns.map((turn) =>
-          turn.role === "user" ? (
-            <div key={turn.id} className="msg user">
-              {turn.text}
-            </div>
-          ) : (
-            <div key={turn.id} className="msg agent">
-              {turn.items.map((item, i) =>
-                item.kind === "text" ? (
-                  <div key={i} className="agent-text">
-  <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.content}</ReactMarkdown>
-</div>
-                ) : (
-                  <ToolCallCard key={item.callId} {...item} />
-                )
-              )}
-              {busy &&
-                turn.id === turns[turns.length - 1].id &&
-                turn.items.length === 0 && (
-                  <p className="agent-text thinking">analyzing…</p>
+          {turns.map((turn) =>
+            turn.role === "user" ? (
+              <div key={turn.id} className="msg user">
+                {turn.text}
+              </div>
+            ) : (
+              <div key={turn.id} className="msg agent">
+                {turn.items.map((item, i) =>
+                  item.kind === "text" ? (
+                    <div key={i} className="agent-text">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <ToolCallCard key={item.callId} {...item} />
+                  )
                 )}
-            </div>
-          )
-        )}
-      </main>
+                {busy &&
+                  turn.id === turns[turns.length - 1].id &&
+                  turn.items.length === 0 && (
+                    <p className="agent-text thinking">analyzing…</p>
+                  )}
+              </div>
+            )
+          )}
+        </main>
 
-      <form
-        className="composer"
-        onSubmit={(e) => {
-          e.preventDefault();
-          send(input);
-        }}
-      >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask the analyst…"
-          disabled={busy}
-        />
-        <button type="submit" disabled={busy || !input.trim()}>
-          Send
-        </button>
-      </form>
-    </div>
+        <form
+          className="composer"
+          onSubmit={(e) => {
+            e.preventDefault();
+            send(input);
+          }}
+        >
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask the analyst…"
+            disabled={busy}
+          />
+          <button type="submit" disabled={busy || !input.trim()}>
+            Send
+          </button>
+        </form>
+      </div>
+    </>
   );
 }
