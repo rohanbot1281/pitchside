@@ -1,3 +1,6 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import React, { useEffect, useRef, useState } from "react";
 import ToolCallCard from "./components/ToolCallCard.jsx";
 
@@ -30,15 +33,18 @@ export default function App() {
     setInput("");
     setBusy(true);
 
-    const history = turns
-      .filter((t) => t.role === "user" || t.text)
-      .map((t) => ({
-        role: t.role,
-        content: t.role === "user" ? t.text : t.items
-          .filter((i) => i.kind === "text")
-          .map((i) => i.content)
-          .join(""),
-      }));
+    const history = turns.map((t) =>
+      t.role === "user"
+        ? { role: "user", content: t.text }
+        : {
+            role: "assistant",
+            content:
+              t.items
+                .filter((i) => i.kind === "text")
+                .map((i) => i.content)
+                .join("") || "(used tools)",
+          }
+    );
 
     const userTurn = { id: uid(), role: "user", text: question };
     const agentTurn = { id: uid(), role: "assistant", items: [] };
@@ -159,9 +165,9 @@ export default function App() {
             <div key={turn.id} className="msg agent">
               {turn.items.map((item, i) =>
                 item.kind === "text" ? (
-                  <p key={i} className="agent-text">
-                    {item.content}
-                  </p>
+                  <div key={i} className="agent-text">
+  <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.content}</ReactMarkdown>
+</div>
                 ) : (
                   <ToolCallCard key={item.callId} {...item} />
                 )
