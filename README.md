@@ -1,11 +1,10 @@
 # Pitchside
 
-An agentic analyst for the 2026 FIFA World Cup. Ask it anything about the tournament and watch it work: the agent decides which tools it needs, chains them across multiple reasoning steps, and streams its full trace — tool calls included — into a live chat UI.
+A chatbot that answers World Cup questions by actually going and getting the data instead of guessing. Ask it who wins the USMNT opener and it looks up the fixture, runs a match simulation, and gives you probabilities it can back up. You watch all of this happen live in the UI, tool calls included.
 
-Built and operated during the tournament itself (June 11 – July 19, 2026).
+I built this during the 2026 World Cup itself, starting the day Mexico played South Africa in the opener. My other two World Cup projects predict things. This one talks, and it uses one of those models as a tool.
 
-**Ask:** *"Who's likely to win the USMNT's opener? Give me probabilities."*
-**The agent:** calls `get_fixtures` to find the match (USA vs Paraguay, June 12, SoFi Stadium) → feeds both teams into `simulate_match`, a Dixon-Coles model → answers with grounded win/draw/loss probabilities, citing its own simulation.
+So when you ask "Who's likely to win the USMNT's opener?", the agent calls `get_fixtures`, finds USA vs Paraguay (June 12, SoFi Stadium), feeds both teams into `simulate_match`, and answers with the actual numbers from the simulation. It decides that chain on its own. Nothing in my code says "fixture questions need two tools."
 
 ## Architecture
 
@@ -29,20 +28,24 @@ Built and operated during the tournament itself (June 11 – July 19, 2026).
                                 └──────────────────────────────────┘
 ```
 
-### The three tools
+## The three tools
 
-- **`get_fixtures`** — adapter over football-data.org's World Cup feed with a bundled mock fallback (real opening-week fixtures), so the demo runs end to end with zero extra API keys. The agent receives an identical schema either way.
-- **`simulate_match`** — a Dixon-Coles match model: per-team attack/defence multipliers drive Poisson goal expectations with the DC tau correction for low-score dependence. Outcome probabilities are computed analytically from the joint score matrix, so results are deterministic. Covers all 48 qualified teams with alias resolution (USA/USMNT, Turkey/Türkiye). Ratings here are illustrative tiers; the production version is fit by maximum likelihood in my [World Cup forecasting project](../) and this tool is designed to be pointed at that API instead.
-- **`search_knowledge`** — RAG over a curated knowledge base (the 12 groups, format and advancement rules, the 16 venues, World Cup history). Markdown docs are chunked by heading, embedded locally with `all-MiniLM-L6-v2` (no embedding API cost), and searched via FAISS cosine similarity.
+**`get_fixtures`** wraps football-data.org's World Cup feed, with bundled mock data (real opening-week fixtures) as a fallback. The demo runs end to end without a second API key, and the agent gets the same schema either way, so it never knows which source it hit.
 
-### Evals
+**`simulate_match`** is a Dixon-Coles model: each team has attack and defence multipliers that drive Poisson goal expectations, with the tau correction for how often low scores like 0-0 and 1-1 actually happen. I compute outcome probabilities from the full joint score matrix instead of Monte Carlo, so the same matchup always returns the same numbers. All 48 qualified teams are covered, and team names resolve through aliases (USA, USMNT, Turkey, Türkiye all work). The ratings here are rough tiers I set by hand. The real version, fit by maximum likelihood on historical internationals, lives in my World Cup forecasting repo, and this tool is built to be pointed at that API instead.
 
-Agent systems fail quietly — usually by calling the wrong tool or asserting facts their tools never returned. `evals/` measures both:
+**`search_knowledge`** is RAG over docs I wrote covering the 12 groups, the advancement rules, the 16 venues, and World Cup history. Docs get chunked by heading, embedded locally with all-MiniLM-L6-v2 (free, runs on CPU), and searched through FAISS with cosine similarity.
 
-- **Tool-selection accuracy** — 8 golden questions, each annotated with the tools the agent *must* call (including a chained case that requires fixture lookup → simulation).
-- **Groundedness** — deterministic keyword assertions on the final answer, plus an optional `--judge` flag that adds an LLM-judge faithfulness score (1–5) of the answer against the actual tool outputs.
+## Evals
 
-Results write to `evals/results.json` so runs can be diffed across prompt or model changes. There's also a no-key pytest suite (`evals/test_units.py`) covering the simulator math, alias resolution, fixture filtering, and chunking.
+Agents fail quietly. They call the wrong tool, or they state facts their tools never returned, and the answer still reads fine. The `evals/` folder measures both failure modes:
+
+- **Tool selection**: 8 golden questions, each tagged with the tools the agent has to call. One of them requires chaining a fixture lookup into a simulation.
+- **Groundedness**: keyword assertions on the final answer, plus an optional `--judge` flag that has a second model score how faithful the answer is to the actual tool outputs, 1 to 5.
+
+Results land in `evals/results.json` so I can diff runs after changing the prompt or the model. There's also a pytest suite (`evals/test_units.py`) for the simulator math, alias resolution, fixture filtering, and chunking. That one needs no API key.
+
+Worth admitting: the very first question I asked in the UI exposed a bug. The agent filtered fixtures by "USA" but the data says "United States", so the tool returned zero matches. The agent recovered by pulling the fixture from the knowledge base instead, which was cool to watch, but the trace made the bug obvious and I patched the filter to resolve aliases. That trace card UI earns its keep.
 
 ## Run it
 
@@ -60,22 +63,22 @@ npm install
 npm run dev                       # http://localhost:5173
 ```
 
-Optional: add a free `FOOTBALL_DATA_API_KEY` from football-data.org to switch fixtures from bundled mock data to live scores.
+Optional: a free `FOOTBALL_DATA_API_KEY` from football-data.org switches fixtures from mock data to live scores.
 
 ```bash
 # Tests and evals
 cd backend
 pytest evals/test_units.py        # deterministic, no key needed
 python -m evals.run_evals         # full agent evals (needs key)
-python -m evals.run_evals --judge # + LLM-judge faithfulness scoring
+python -m evals.run_evals --judge # adds LLM-judge faithfulness scoring
 ```
 
-## Design notes
+## Decisions I'd defend
 
-- **Visible reasoning.** The UI renders every tool call as a trace card — name, arguments, a one-line result summary, expandable raw JSON. Agent transparency is the demo.
-- **Graceful degradation.** No football-data key → mock fixtures. Unknown team → structured error the agent can recover from, rather than an exception.
-- **One streaming contract.** The backend emits typed events (`text`, `tool_call`, `tool_result`, `done`) over SSE; the frontend is a thin renderer of that event stream.
+- The UI shows every tool call as a card with the name, arguments, a one-line summary, and expandable raw JSON. Watching the agent work is the whole point of the demo.
+- Things degrade instead of crashing. No football-data key? Mock fixtures. Unknown team name? The simulator returns a structured error the agent can read and recover from.
+- The backend emits four event types over SSE (`text`, `tool_call`, `tool_result`, `done`) and the frontend just renders that stream. Keeping one contract made both sides simpler.
 
 ## Stack
 
-Python · FastAPI · Anthropic API (tool use + streaming) · FAISS · sentence-transformers · NumPy · React · Vite
+Python, FastAPI, Anthropic API (tool use + streaming), FAISS, sentence-transformers, NumPy, React, Vite
