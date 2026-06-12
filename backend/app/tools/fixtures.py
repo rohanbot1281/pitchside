@@ -12,6 +12,8 @@ import httpx
 
 from ..config import settings
 
+from .simulator import _resolve
+
 API_BASE = "https://api.football-data.org/v4/competitions/WC/matches"
 
 
@@ -48,8 +50,13 @@ async def get_fixtures(
     start = date_from or str(today - timedelta(days=1))
     end = date_to or str(today + timedelta(days=3))
 
+    # The model occasionally writes the wrong year; clamp to tournament year.
+    start = start.replace("2025-", "2026-")
+    end = end.replace("2025-", "2026-")
+
     matches: list[dict]
     source = "mock"
+    fallback_reason = None
 
     if settings.football_data_api_key:
         try:
@@ -62,7 +69,8 @@ async def get_fixtures(
                 resp.raise_for_status()
                 matches = [_normalize_api(m) for m in resp.json().get("matches", [])]
                 source = "football-data.org"
-        except (httpx.HTTPError, KeyError, ValueError):
+        except (httpx.HTTPError, KeyError, ValueError) as e:
+            fallback_reason = f"{type(e).__name__}: {e}"
             matches = _load_mock()
     else:
         matches = _load_mock()
@@ -71,11 +79,16 @@ async def get_fixtures(
         matches = [m for m in matches if start <= m["date"] <= end]
 
     if team:
+        resolved = _resolve(team)
+        canonical = resolved[0].lower() if resolved else team.strip().lower()
         t = team.strip().lower()
         matches = [
             m
             for m in matches
-            if t in m["home_team"].lower() or t in m["away_team"].lower()
+            if canonical in m["home_team"].lower()
+            or canonical in m["away_team"].lower()
+            or t in m["home_team"].lower()
+            or t in m["away_team"].lower()
         ]
 
     return {
@@ -83,5 +96,6 @@ async def get_fixtures(
         "window": {"from": start, "to": end},
         "match_count": len(matches),
         "matches": matches[:25],
+        "fallback_reason": fallback_reason,
         "retrieved_at": datetime.utcnow().isoformat() + "Z",
     }
