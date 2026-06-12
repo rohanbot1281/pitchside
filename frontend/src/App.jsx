@@ -1,3 +1,6 @@
+import Backdrop from "./components/Backdrop.jsx";
+
+
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -132,7 +135,7 @@ export default function App() {
 
  return (
     <>
-      <div className="backdrop" aria-hidden="true" />
+      <Backdrop />
       <div className="shell">
         <header className="masthead">
           <div className="badge">WC 2026</div>
