@@ -8,6 +8,7 @@ the frontend renders live.
 """
 
 import json
+from datetime import date
 from typing import AsyncGenerator
 
 from anthropic import AsyncAnthropic
@@ -17,6 +18,10 @@ from .tools.registry import TOOL_SCHEMAS, dispatch_tool
 
 SYSTEM_PROMPT = """You are Pitchside, an analyst agent for the 2026 FIFA World Cup \
 (June 11 – July 19, 2026, hosted by the United States, Mexico, and Canada).
+
+Today's date is {today}. Resolve relative dates like "yesterday", "tomorrow", \
+or "this weekend" from that. When asked about current or recent matches, \
+prefer omitting date parameters so get_fixtures uses its default window.
 
 You have three tools:
 - get_fixtures: live/recent/upcoming match data and results
@@ -29,8 +34,10 @@ Ground every factual claim in tool output. If a question needs both live \
 data and a simulation (e.g. "who wins tomorrow's match?"), chain the tools: \
 fetch the fixture first, then simulate it. When you cite probabilities, \
 always say they come from your simulation model, and round to whole \
-percentages. If the knowledge base and live data conflict, trust live data. \
-If you genuinely can't answer from your tools, say so plainly.
+percentages. The simulator only applies a host-nation boost to the United \
+States, Mexico, and Canada; never claim other teams received one. If the \
+knowledge base and live data conflict, trust live data. If you genuinely \
+can't answer from your tools, say so plainly.
 
 Style: sharp, conversational, like a good touchline analyst. No filler, \
 no hedging boilerplate. Use the metric the fan cares about."""
@@ -51,6 +58,7 @@ async def run_agent(
       {"type": "done"}
     """
     convo = list(messages)
+    system_prompt = SYSTEM_PROMPT.format(today=date.today().isoformat())
 
     for _ in range(max_steps):
         tool_calls = []
@@ -59,7 +67,7 @@ async def run_agent(
         async with client.messages.stream(
             model=settings.model,
             max_tokens=1500,
-            system=SYSTEM_PROMPT,
+            system=system_prompt,
             tools=TOOL_SCHEMAS,
             messages=convo,
         ) as stream:
